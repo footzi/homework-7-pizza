@@ -51,11 +51,12 @@ export default (state = [], action) => {
       return [
         ...state.map(item => {
           if (item.id === action.payload) {
-            item.position = getPositionNext(item.position);
-          }
-
-          if (item.position === 'conveyor_4' && item.ingredients.length === item.recipe.length) {
-            item.position = 'finish'
+            const isFinish = item.position === 'conveyor_4' && item.ingredients.length === item.recipe.length;
+            
+            return {
+              ...item,
+              position: isFinish ? 'finish' : getPositionNext(item.position)
+            }
           }
           return item;
         })
@@ -65,7 +66,10 @@ export default (state = [], action) => {
       return [
         ...state.map(item => {
           if (item.id === action.payload) {
-            item.position = getPositionPrev(item.position);
+            return {
+              ...item,
+              position: getPositionPrev(item.position)
+            }
           }
           return item;
         })
@@ -76,7 +80,11 @@ export default (state = [], action) => {
           const { from, ingredient} = action.payload;
 
           if (item.position === from && item.recipe.includes(ingredient)) {
-            item.ingredients = [...item.ingredients, ingredient];
+            return {
+              ...item,
+              ingredients: [...item.ingredients, ingredient]
+            }
+            // item.ingredients = [...item.ingredients, ingredient];
           }
           return item;
         })
